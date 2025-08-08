@@ -1,0 +1,3 @@
+a call to fire.Build indicates that this function is an injector, but injectors must consist of only the fire.Build call and an optional return
+
+a call to fire.Build indicates that this function is an injector, but injectors must consist of only the fire.Build call and an optional return

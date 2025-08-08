@@ -1,4 +1,4 @@
-// Copyright 2018 The Wire Authors
+// Copyright 2018 The Fire Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Wire is a compile-time dependency injection tool.
+// Fire is a compile-time dependency injection tool.
 //
-// For an overview, see https://github.com/google/wire/blob/master/README.md
+// For an overview, see https://github.com/google/fire/blob/master/README.md
 package main
 
 import (
@@ -32,7 +32,7 @@ import (
 	"strings"
 
 	"github.com/google/subcommands"
-	"github.com/google/wire/internal/wire"
+	"github.com/myyrakle/fire/internal/fire"
 	"github.com/pmezard/go-difflib/difflib"
 	"golang.org/x/tools/go/types/typeutil"
 )
@@ -49,7 +49,7 @@ func main() {
 
 	// Initialize the default logger to log to stderr.
 	log.SetFlags(0)
-	log.SetPrefix("wire: ")
+	log.SetPrefix("fire: ")
 	log.SetOutput(os.Stderr)
 
 	// TODO(rvangent): Use subcommands's VisitCommands instead of hardcoded map,
@@ -73,7 +73,7 @@ func main() {
 	os.Exit(int(subcommands.Execute(context.Background())))
 }
 
-// packages returns the slice of packages to run wire over based on f.
+// packages returns the slice of packages to run fire over based on f.
 // It defaults to ".".
 func packages(f *flag.FlagSet) []string {
 	pkgs := f.Args()
@@ -83,10 +83,10 @@ func packages(f *flag.FlagSet) []string {
 	return pkgs
 }
 
-// newGenerateOptions returns an initialized wire.GenerateOptions, possibly
+// newGenerateOptions returns an initialized fire.GenerateOptions, possibly
 // with the Header option set.
-func newGenerateOptions(headerFile string) (*wire.GenerateOptions, error) {
-	opts := new(wire.GenerateOptions)
+func newGenerateOptions(headerFile string) (*fire.GenerateOptions, error) {
+	opts := new(fire.GenerateOptions)
 	if headerFile != "" {
 		var err error
 		opts.Header, err = ioutil.ReadFile(headerFile)
@@ -105,20 +105,20 @@ type genCmd struct {
 
 func (*genCmd) Name() string { return "gen" }
 func (*genCmd) Synopsis() string {
-	return "generate the wire_gen.go file for each package"
+	return "generate the fire_gen.go file for each package"
 }
 func (*genCmd) Usage() string {
 	return `gen [packages]
 
-  Given one or more packages, gen creates the wire_gen.go file for each.
+  Given one or more packages, gen creates the fire_gen.go file for each.
 
   If no packages are listed, it defaults to ".".
 `
 }
 func (cmd *genCmd) SetFlags(f *flag.FlagSet) {
-	f.StringVar(&cmd.headerFile, "header_file", "", "path to file to insert as a header in wire_gen.go")
+	f.StringVar(&cmd.headerFile, "header_file", "", "path to file to insert as a header in fire_gen.go")
 	f.StringVar(&cmd.prefixFileName, "output_file_prefix", "", "string to prepend to output file names.")
-	f.StringVar(&cmd.tags, "tags", "", "append build tags to the default wirebuild")
+	f.StringVar(&cmd.tags, "tags", "", "append build tags to the default firebuild")
 }
 
 func (cmd *genCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interface{}) subcommands.ExitStatus {
@@ -136,7 +136,7 @@ func (cmd *genCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interfa
 	opts.PrefixOutputFile = cmd.prefixFileName
 	opts.Tags = cmd.tags
 
-	outs, errs := wire.Generate(ctx, wd, os.Environ(), packages(f), opts)
+	outs, errs := fire.Generate(ctx, wd, os.Environ(), packages(f), opts)
 	if len(errs) > 0 {
 		logErrors(errs)
 		log.Println("generate failed")
@@ -153,7 +153,7 @@ func (cmd *genCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interfa
 			success = false
 		}
 		if len(out.Content) == 0 {
-			// No Wire output. Maybe errors, maybe no Wire directives.
+			// No Fire output. Maybe errors, maybe no Fire directives.
 			continue
 		}
 		if err := out.Commit(); err == nil {
@@ -177,12 +177,12 @@ type diffCmd struct {
 
 func (*diffCmd) Name() string { return "diff" }
 func (*diffCmd) Synopsis() string {
-	return "output a diff between existing wire_gen.go files and what gen would generate"
+	return "output a diff between existing fire_gen.go files and what gen would generate"
 }
 func (*diffCmd) Usage() string {
 	return `diff [packages]
 
-  Given one or more packages, diff generates the content for their wire_gen.go
+  Given one or more packages, diff generates the content for their fire_gen.go
   files and outputs the diff against the existing files.
 
   If no packages are listed, it defaults to ".".
@@ -192,8 +192,8 @@ func (*diffCmd) Usage() string {
 `
 }
 func (cmd *diffCmd) SetFlags(f *flag.FlagSet) {
-	f.StringVar(&cmd.headerFile, "header_file", "", "path to file to insert as a header in wire_gen.go")
-	f.StringVar(&cmd.tags, "tags", "", "append build tags to the default wirebuild")
+	f.StringVar(&cmd.headerFile, "header_file", "", "path to file to insert as a header in fire_gen.go")
+	f.StringVar(&cmd.tags, "tags", "", "append build tags to the default firebuild")
 }
 func (cmd *diffCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interface{}) subcommands.ExitStatus {
 	const (
@@ -213,7 +213,7 @@ func (cmd *diffCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interf
 
 	opts.Tags = cmd.tags
 
-	outs, errs := wire.Generate(ctx, wd, os.Environ(), packages(f), opts)
+	outs, errs := fire.Generate(ctx, wd, os.Environ(), packages(f), opts)
 	if len(errs) > 0 {
 		logErrors(errs)
 		log.Println("generate failed")
@@ -231,7 +231,7 @@ func (cmd *diffCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interf
 			success = false
 		}
 		if len(out.Content) == 0 {
-			// No Wire output. Maybe errors, maybe no Wire directives.
+			// No Fire output. Maybe errors, maybe no Fire directives.
 			continue
 		}
 		// Assumes the current file is empty if we can't read it.
@@ -280,7 +280,7 @@ func (*showCmd) Usage() string {
 `
 }
 func (cmd *showCmd) SetFlags(f *flag.FlagSet) {
-	f.StringVar(&cmd.tags, "tags", "", "append build tags to the default wirebuild")
+	f.StringVar(&cmd.tags, "tags", "", "append build tags to the default firebuild")
 }
 func (cmd *showCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interface{}) subcommands.ExitStatus {
 	wd, err := os.Getwd()
@@ -288,9 +288,9 @@ func (cmd *showCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interf
 		log.Println("failed to get working directory: ", err)
 		return subcommands.ExitFailure
 	}
-	info, errs := wire.Load(ctx, wd, os.Environ(), cmd.tags, packages(f))
+	info, errs := fire.Load(ctx, wd, os.Environ(), cmd.tags, packages(f))
 	if info != nil {
-		keys := make([]wire.ProviderSetID, 0, len(info.Sets))
+		keys := make([]fire.ProviderSetID, 0, len(info.Sets))
 		for k := range info.Sets {
 			keys = append(keys, k)
 		}
@@ -314,11 +314,11 @@ func (cmd *showCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interf
 				out := make(map[string]token.Pos, outGroups[i].outputs.Len())
 				outGroups[i].outputs.Iterate(func(t types.Type, v interface{}) {
 					switch v := v.(type) {
-					case *wire.Provider:
+					case *fire.Provider:
 						out[types.TypeString(t, nil)] = v.Pos
-					case *wire.Value:
+					case *fire.Value:
 						out[types.TypeString(t, nil)] = v.Pos
-					case *wire.Field:
+					case *fire.Field:
 						out[types.TypeString(t, nil)] = v.Pos
 					default:
 						panic("unreachable")
@@ -331,7 +331,7 @@ func (cmd *showCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interf
 			}
 		}
 		if len(info.Injectors) > 0 {
-			injectors := append([]*wire.Injector(nil), info.Injectors...)
+			injectors := append([]*fire.Injector(nil), info.Injectors...)
 			sort.Slice(injectors, func(i, j int) bool {
 				if injectors[i].ImportPath == injectors[j].ImportPath {
 					return injectors[i].FuncName < injectors[j].FuncName
@@ -358,19 +358,19 @@ type checkCmd struct {
 
 func (*checkCmd) Name() string { return "check" }
 func (*checkCmd) Synopsis() string {
-	return "print any Wire errors found"
+	return "print any Fire errors found"
 }
 func (*checkCmd) Usage() string {
 	return `check [-tags tag,list] [packages]
 
-  Given one or more packages, check prints any type-checking or Wire errors
+  Given one or more packages, check prints any type-checking or Fire errors
   found with top-level variable provider sets or injector functions.
 
   If no packages are listed, it defaults to ".".
 `
 }
 func (cmd *checkCmd) SetFlags(f *flag.FlagSet) {
-	f.StringVar(&cmd.tags, "tags", "", "append build tags to the default wirebuild")
+	f.StringVar(&cmd.tags, "tags", "", "append build tags to the default firebuild")
 }
 func (cmd *checkCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...interface{}) subcommands.ExitStatus {
 	wd, err := os.Getwd()
@@ -378,7 +378,7 @@ func (cmd *checkCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...inter
 		log.Println("failed to get working directory: ", err)
 		return subcommands.ExitFailure
 	}
-	_, errs := wire.Load(ctx, wd, os.Environ(), cmd.tags, packages(f))
+	_, errs := fire.Load(ctx, wd, os.Environ(), cmd.tags, packages(f))
 	if len(errs) > 0 {
 		logErrors(errs)
 		log.Println("error loading packages")
@@ -390,19 +390,19 @@ func (cmd *checkCmd) Execute(ctx context.Context, f *flag.FlagSet, args ...inter
 type outGroup struct {
 	name    string
 	inputs  *typeutil.Map // values are not important
-	outputs *typeutil.Map // values are *wire.Provider, *wire.Value, or *wire.Field
+	outputs *typeutil.Map // values are *fire.Provider, *fire.Value, or *fire.Field
 }
 
 // gather flattens a provider set into outputs grouped by the inputs
 // required to create them. As it flattens the provider set, it records
 // the visited named provider sets as imports.
-func gather(info *wire.Info, key wire.ProviderSetID) (_ []outGroup, imports map[string]struct{}) {
+func gather(info *fire.Info, key fire.ProviderSetID) (_ []outGroup, imports map[string]struct{}) {
 	set := info.Sets[key]
 	hash := typeutil.MakeHasher()
 
 	// Find imports.
-	next := []*wire.ProviderSet{info.Sets[key]}
-	visited := make(map[*wire.ProviderSet]struct{})
+	next := []*fire.ProviderSet{info.Sets[key]}
+	visited := make(map[*fire.ProviderSet]struct{})
 	imports = make(map[string]struct{})
 	for len(next) > 0 {
 		curr := next[len(next)-1]
