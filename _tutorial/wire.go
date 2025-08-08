@@ -1,4 +1,4 @@
-// Copyright 2018 The Wire Authors
+// Copyright 2018 The Fire Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//go:build wireinject
-// +build wireinject
+//go:build fireinject
+// +build fireinject
 
 // The build tag makes sure the stub is not built in the final build.
 package main
 
-import "github.com/google/wire"
+import "github.com/myyrakle/fire"
 
 // InitializeEvent creates an Event. It will error if the Event is staffed with
 // a grumpy greeter.
 func InitializeEvent(phrase string) (Event, error) {
-	wire.Build(NewEvent, NewGreeter, NewMessage)
+	fire.Build(NewEvent, NewGreeter, NewMessage)
 	return Event{}, nil
 }

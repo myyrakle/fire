@@ -1,30 +1,31 @@
-# Wire: Automated Initialization in Go
+# Fire: Automated Initialization in Go
 
-[![Build Status](https://github.com/google/wire/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/google/wire/actions)
-[![godoc](https://godoc.org/github.com/google/wire?status.svg)][godoc]
-[![Coverage](https://codecov.io/gh/google/wire/branch/master/graph/badge.svg)](https://codecov.io/gh/google/wire)
+- (fork or [google/wire](https://github.com/google/wire))
 
+[![Build Status](https://github.com/myyrakle/fire/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/myyrakle/fire/actions)
+[![godoc](https://godoc.org/github.com/myyrakle/fire?status.svg)][godoc]
+[![Coverage](https://codecov.io/gh/myyrakle/fire/branch/master/graph/badge.svg)](https://codecov.io/gh/myyrakle/fire)
 
-Wire is a code generation tool that automates connecting components using
+Fire is a code generation tool that automates connecting components using
 [dependency injection][]. Dependencies between components are represented in
-Wire as function parameters, encouraging explicit initialization instead of
-global variables. Because Wire operates without runtime state or reflection,
-code written to be used with Wire is useful even for hand-written
+Fire as function parameters, encouraging explicit initialization instead of
+global variables. Because Fire operates without runtime state or reflection,
+code written to be used with Fire is useful even for hand-written
 initialization.
 
 For an overview, see the [introductory blog post][].
 
 [dependency injection]: https://en.wikipedia.org/wiki/Dependency_injection
-[introductory blog post]: https://blog.golang.org/wire
-[godoc]: https://godoc.org/github.com/google/wire
-[travis]: https://travis-ci.com/google/wire
+[introductory blog post]: https://blog.golang.org/fire
+[godoc]: https://godoc.org/github.com/myyrakle/fire
+[travis]: https://travis-ci.com/myyrakle/fire
 
 ## Installing
 
-Install Wire by running:
+Install Fire by running:
 
 ```shell
-go install github.com/google/wire/cmd/wire@latest
+go install github.com/myyrakle/fire/cmd/fire@latest
 ```
 
 and ensuring that `$GOPATH/bin` is added to your `$PATH`.
@@ -43,7 +44,7 @@ and ensuring that `$GOPATH/bin` is added to your `$PATH`.
 
 ## Project status
 
-As of version v0.3.0, Wire is *beta* and is considered feature complete. It
+As of version v0.3.0, Fire is _beta_ and is considered feature complete. It
 works well for the tasks it was designed to perform, and we prefer to keep it
 as simple as possible.
 
@@ -52,7 +53,7 @@ reports and fixes.
 
 ## Community
 
-For questions, please use [GitHub Discussions](https://github.com/google/wire/discussions).
+For questions, please use [GitHub Discussions](https://github.com/myyrakle/fire/discussions).
 
 This project is covered by the Go [Code of Conduct][].
 

@@ -1,0 +1,3 @@
+example.com/foo/fire.go:x:y: not enough arguments in call to fire.InterfaceValue
+	have (string)
+	want (interface{}, interface{})

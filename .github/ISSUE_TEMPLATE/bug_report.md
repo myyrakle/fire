@@ -1,7 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve Wire
-
+about: Create a report to help us improve Fire
 ---
 
 You can use `go bug` to have a cool, automatically filled out bug template, or
@@ -21,7 +20,7 @@ A clear and concise description of what you expected to happen.
 
 ### Version
 
-Which version of Wire are you seeing the bug with?
+Which version of Fire are you seeing the bug with?
 
 ### Additional context
 
